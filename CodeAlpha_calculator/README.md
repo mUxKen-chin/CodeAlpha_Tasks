@@ -2,8 +2,6 @@
 
 A single-file, self-contained calculator built with HTML, CSS, and vanilla JavaScript. No frameworks, no build step, no dependencies beyond two Google Fonts.
 
-Deployement link: https://muxken-chin.github.io/CodeAlpha_Calculator/
-
 ## Files
 
 - `calculator.html` — everything (markup, styles, logic) in one file. Just open it in a browser.
