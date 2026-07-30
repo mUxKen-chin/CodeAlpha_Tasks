@@ -2,8 +2,6 @@
 
 A responsive image gallery built for the CodeAlpha internship, styled as a private art-viewing room. Includes category filtering, a full-screen lightbox with keyboard/swipe navigation, and smooth hover animations.
 
-🔗 **Live Demo:** https://muxken-chin.github.io/CodeAlpha_ImageGallery/
-
 ## Features
 
 - Responsive masonry-style grid layout (CSS Grid, `auto-flow: dense`)
