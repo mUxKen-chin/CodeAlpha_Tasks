@@ -2,6 +2,8 @@
 
 A single-file, browser-based music player with a vinyl-record theme, built with plain HTML, CSS, and JavaScript. No build step, no dependencies, no backend — open the file and it works.
 
+Deployment link: https://muxken-chin.github.io/CodeAlpha_MusicPlayer/
+
 ## Features
 
 - **Playback controls** — play, pause, next, previous, shuffle, and 3-state repeat (off / repeat all / repeat one)
