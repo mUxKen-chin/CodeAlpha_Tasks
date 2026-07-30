@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #16140f;
+    --panel: #201d17;
+    --panel-edge: #2b2720;
+    --key: #262219;
+    --key-hover: #302b20;
+    --key-active: #1c1912;
+    --key-fn: #2a251b;
+    --brass: #c79a56;
+    --brass-bright: #e0b978;
+    --brass-dim: #8a6f45;
+    --text: #f3ede0;
+    --text-dim: #948d7d;
+    --text-faint: #5f594c;
+    --shadow-deep: rgba(0,0,0,0.55);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    height: 100%;
+    margin: 0;
+  }
+
+  body{
+    background: radial-gradient(circle at 30% 20%, #1d1a13 0%, var(--bg) 55%, #0f0d09 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  .device{
+    width: 100%;
+    max-width: 340px;
+    background: linear-gradient(160deg, var(--panel-edge), var(--panel) 40%, #191610 100%);
+    border-radius: 30px;
+    padding: 22px;
+    box-shadow:
+      0 30px 60px -20px var(--shadow-deep),
+      0 2px 0 rgba(255,255,255,0.03) inset,
+      0 -2px 12px rgba(0,0,0,0.5) inset;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .brand{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 2px 6px 14px;
+  }
+
+  .brand-mark{
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    font-weight: 500;
+  }
+
+  .brand-model{
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .screen{
+    position: relative;
+    background: linear-gradient(155deg, #0d0b08, #131109 60%, #0d0b08);
+    border-radius: 18px;
+    padding: 26px 20px 20px;
+    margin-bottom: 18px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.05),
+      0 10px 20px -12px rgba(0,0,0,0.6) inset,
+      0 0 0 1px rgba(199,154,86,0.08);
+    min-height: 118px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .screen::before{
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(199,154,86,0.35), transparent);
+  }
+
+  .history{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-faint);
+    min-height: 18px;
+    text-align: right;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: color 0.2s ease;
+  }
+  .history::-webkit-scrollbar{ display: none; }
+
+  .result{
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+    font-size: 42px;
+    color: var(--text);
+    text-align: right;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    text-shadow: 0 0 18px rgba(243,237,224,0.08);
+  }
+  .result::-webkit-scrollbar{ display: none; }
+
+  .result.error{
+    color: #c97b6b;
+    font-size: 26px;
+  }
+
+  .keys{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    touch-action: manipulation;
+  }
+
+  button.key{
+    appearance: none;
+    border: none;
+    outline: none;
+    height: 62px;
+    border-radius: 15px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--text);
+    background: linear-gradient(160deg, var(--key), #201d16 90%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 3px 6px rgba(0,0,0,0.35),
+      0 6px 0 -3px rgba(0,0,0,0.25);
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+    position: relative;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  button.key:hover{
+    background: linear-gradient(160deg, var(--key-hover), #262119 90%);
+  }
+
+  button.key:active,
+  button.key.pressed{
+    transform: translateY(3px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.03) inset,
+      0 1px 2px rgba(0,0,0,0.4);
+    background: var(--key-active);
+  }
+
+  button.key.fn{
+    background: linear-gradient(160deg, var(--key-fn), #23200f 90%);
+    color: var(--brass);
+    font-size: 16px;
+  }
+
+  button.key.fn:hover{
+    background: linear-gradient(160deg, #322c1f, #24200f 90%);
+  }
+
+  button.key.op{
+    color: var(--brass-bright);
+    font-size: 22px;
+    font-weight: 400;
+  }
+
+  button.key.zero{
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 26px;
+  }
+
+  button.key.equals{
+    background: linear-gradient(160deg, var(--brass-bright), var(--brass) 90%);
+    color: #211a0f;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.4) inset,
+      0 3px 6px rgba(0,0,0,0.35),
+      0 6px 0 -3px rgba(120,88,32,0.6);
+  }
+
+  button.key.equals:hover{
+    background: linear-gradient(160deg, #e8c37f, #cda05e 90%);
+  }
+
+  button.key.equals:active,
+  button.key.equals.pressed{
+    background: var(--brass-dim);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2) inset, 0 1px 2px rgba(0,0,0,0.4);
+  }
+
+  .hint{
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 380px){
+    .device{ padding: 16px; }
+    button.key{ height: 56px; font-size: 17px; }
+    .result{ font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="brand">
+    <span class="brand-mark">Calc &nbsp;·&nbsp; Atelier</span>
+    <span class="brand-model">MK-01</span>
+  </div>
+
+  <div class="screen">
+    <div class="history" id="history">&nbsp;</div>
+    <div class="result" id="result">0</div>
+  </div>
+
+  <div class="keys">
+    <button type="button" class="key fn" data-action="clear">AC</button>
+    <button type="button" class="key fn" data-action="backspace">⌫</button>
+    <button type="button" class="key fn" data-action="percent">%</button>
+    <button type="button" class="key op" data-action="divide">÷</button>
+
+    <button type="button" class="key" data-num="7">7</button>
+    <button type="button" class="key" data-num="8">8</button>
+    <button type="button" class="key" data-num="9">9</button>
+    <button type="button" class="key op" data-action="multiply">×</button>
+
+    <button type="button" class="key" data-num="4">4</button>
+    <button type="button" class="key" data-num="5">5</button>
+    <button type="button" class="key" data-num="6">6</button>
+    <button type="button" class="key op" data-action="subtract">−</button>
+
+    <button type="button" class="key" data-num="1">1</button>
+    <button type="button" class="key" data-num="2">2</button>
+    <button type="button" class="key" data-num="3">3</button>
+    <button type="button" class="key op" data-action="add">+</button>
+
+    <button type="button" class="key zero" data-num="0">0</button>
+    <button type="button" class="key" data-action="decimal">.</button>
+    <button type="button" class="key equals" data-action="equals">=</button>
+  </div>
+
+  <div class="hint">keyboard enabled &nbsp;·&nbsp; esc to clear</div>
+</div>
+
+<script>
+(function(){
+  const resultEl = document.getElementById('result');
+  const historyEl = document.getElementById('history');
+
+  let current = '0';        // value currently being typed / shown
+  let previous = null;      // stored previous operand
+  let operator = null;      // pending operator symbol
+  let overwrite = true;     // next digit press should replace current
+  let justEvaluated = false;
+
+  const OPS = {
+    add: '+',
+    subtract: '−',
+    multiply: '×',
+    divide: '÷'
+  };
+
+  function formatNumber(value){
+    const numStr = String(value);
+    if (numStr === 'Error') return numStr;
+    const num = Number(numStr);
+    if (!isFinite(num)) return 'Error';
+
+    // Preserve trailing decimal point while typing, e.g. "12."
+    const endsWithDot = numStr.endsWith('.');
+    if (Math.abs(num) < 1e15) {
+      let str = num.toString();
+      if (str.includes('e')) {
+        str = num.toPrecision(10).replace(/\.?0+$/, '');
+      }
+      const parts = str.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return parts.join('.') + (endsWithDot ? '.' : '');
+    }
+    return num.toExponential(4);
+  }
+
+  function updateScreen(){
+    resultEl.classList.remove('error');
+    resultEl.textContent = formatNumber(current);
+    if (operator && previous !== null){
+      historyEl.textContent = `${formatNumber(previous)} ${operator}`;
+    } else if (justEvaluated && previous !== null && operator === null && historyEl.dataset.lastExpr){
+      historyEl.textContent = historyEl.dataset.lastExpr;
+    } else {
+      historyEl.textContent = '\u00A0';
+    }
+  }
+
+  function inputDigit(d){
+    if (justEvaluated){
+      previous = null; operator = null; justEvaluated = false;
+      historyEl.removeAttribute('data-last-expr');
+    }
+    if (overwrite){
+      current = (d === '.') ? '0.' : d;
+      overwrite = false;
+    } else {
+      if (d === '.'){
+        if (!current.includes('.')) current += '.';
+      } else {
+        if (current === '0') current = d;
+        else current += d;
+      }
+    }
+    updateScreen();
+  }
+
+  function compute(a, op, b){
+    switch(op){
+      case '+': return a + b;
+      case '−': return a - b;
+      case '×': return a * b;
+      case '÷': return b === 0 ? NaN : a / b;
+      default: return b;
+    }
+  }
+
+  function chooseOperator(action){
+    const sym = OPS[action];
+    if (justEvaluated){
+      justEvaluated = false;
+      historyEl.removeAttribute('data-last-expr');
+    }
+    if (operator && !overwrite){
+      const result = compute(previous, operator, parseFloat(current));
+      previous = result;
+      current = String(result);
+    } else {
+      previous = parseFloat(current);
+    }
+    operator = sym;
+    overwrite = true;
+    updateScreen();
+  }
+
+  function equals(){
+    if (operator === null || previous === null) return;
+    const b = parseFloat(current);
+    const exprText = `${formatNumber(previous)} ${operator} ${formatNumber(current)} =`;
+    const result = compute(previous, operator, b);
+
+    if (!isFinite(result)){
+      current = 'Error';
+      resultEl.classList.add('error');
+      resultEl.textContent = 'Error';
+      historyEl.textContent = exprText;
+      previous = null; operator = null; overwrite = true; justEvaluated = false;
+      return;
+    }
+
+    current = String(result);
+    previous = null;
+    operator = null;
+    overwrite = true;
+    justEvaluated = true;
+    historyEl.dataset.lastExpr = exprText;
+    updateScreen();
+  }
+
+  function clearAll(){
+    current = '0';
+    previous = null;
+    operator = null;
+    overwrite = true;
+    justEvaluated = false;
+    historyEl.removeAttribute('data-last-expr');
+    updateScreen();
+  }
+
+  function backspace(){
+    if (justEvaluated){ clearAll(); return; }
+    if (overwrite) return;
+    current = current.length > 1 ? current.slice(0, -1) : '0';
+    if (current === '' || current === '-') current = '0';
+    if (current === '0') overwrite = true;
+    updateScreen();
+  }
+
+  function percent(){
+    if (justEvaluated){
+      previous = null; operator = null; justEvaluated = false;
+      historyEl.removeAttribute('data-last-expr');
+    }
+    const val = parseFloat(current);
+    if (isNaN(val)) return;
+    let result;
+    if (operator && previous !== null){
+      result = previous * (val / 100);
+    } else {
+      result = val / 100;
+    }
+    current = String(result);
+    overwrite = true;
+    updateScreen();
+  }
+
+  function flashKey(el){
+    if (!el) return;
+    el.classList.add('pressed');
+    setTimeout(() => el.classList.remove('pressed'), 110);
+  }
+
+  document.querySelector('.keys').addEventListener('click', (e) => {
+    const btn = e.target.closest('.key');
+    if (!btn) return;
+
+    const num = btn.dataset.num;
+    const action = btn.dataset.action;
+
+    if (num !== undefined){
+      inputDigit(num);
+    } else if (action === 'decimal'){
+      inputDigit('.');
+    } else if (OPS[action]){
+      chooseOperator(action);
+    } else if (action === 'equals'){
+      equals();
+    } else if (action === 'clear'){
+      clearAll();
+    } else if (action === 'backspace'){
+      backspace();
+    } else if (action === 'percent'){
+      percent();
+    }
+  });
+
+  const actionMap = {
+    'add': 'add', 'subtract': 'subtract', 'multiply': 'multiply', 'divide': 'divide'
+  };
+
+  window.addEventListener('keydown', (e) => {
+    const key = e.key;
+    let selector = null;
+
+    if (/^[0-9]$/.test(key)){
+      inputDigit(key);
+      selector = `[data-num="${key}"]`;
+    } else if (key === '.'){
+      inputDigit('.');
+      selector = '[data-action="decimal"]';
+    } else if (key === '+'){
+      chooseOperator('add');
+      selector = '[data-action="add"]';
+    } else if (key === '-'){
+      chooseOperator('subtract');
+      selector = '[data-action="subtract"]';
+    } else if (key === '*'){
+      chooseOperator('multiply');
+      selector = '[data-action="multiply"]';
+    } else if (key === '/'){
+      e.preventDefault();
+      chooseOperator('divide');
+      selector = '[data-action="divide"]';
+    } else if (key === 'Enter' || key === '='){
+      equals();
+      selector = '[data-action="equals"]';
+    } else if (key === 'Backspace'){
+      backspace();
+      selector = '[data-action="backspace"]';
+    } else if (key === 'Escape'){
+      clearAll();
+      selector = '[data-action="clear"]';
+    } else if (key === '%'){
+      percent();
+      selector = '[data-action="percent"]';
+    } else {
+      return;
+    }
+
+    if (selector){
+      flashKey(document.querySelector(selector));
+    }
+  });
+
+  updateScreen();
+})();
+</script>
+
+</body>
+</html>
