@@ -2,6 +2,8 @@
 
 A modern, responsive personal portfolio website designed to showcase the work, skills, and experience of **Muhammad Haris**, a UX/UI Designer and Computer Science undergraduate at FAST-NUCES.
 
+Netlify Deployment: https://muharis-porfolio.netlify.app/
+
 The portfolio highlights featured projects, technical skills, professional background, and contact information with a clean, premium-inspired interface.
 
 ---
