@@ -38,8 +38,6 @@ https://muharis-porfolio.netlify.app/
 
 A browser-based music player with a premium vinyl-inspired interface. It includes playlist management, drag-and-drop music import, playback controls, keyboard shortcuts, autoplay, and a fully responsive design.
 
-🔗 **Live Demo:**
-https://muxken-chin.github.io/CodeAlpha_MusicPlayer/
 
 📁 **Project Folder:** `CodeAlpha_MusicPlayer`
 
@@ -49,8 +47,6 @@ https://muxken-chin.github.io/CodeAlpha_MusicPlayer/
 
 A premium calculator inspired by the iPhone calculator with left-to-right evaluation, keyboard support, repeat-equals functionality, percentage calculations, and an elegant instrument-inspired interface.
 
-🔗 **Live Demo:**
-https://muxken-chin.github.io/CodeAlpha_Calculator/
 
 📁 **Project Folder:** `CodeAlpha_Calculator`
 
@@ -60,8 +56,6 @@ https://muxken-chin.github.io/CodeAlpha_Calculator/
 
 A responsive image gallery featuring category filtering, a fullscreen lightbox, keyboard and touch navigation, smooth animations, and an art gallery-inspired design.
 
-🔗 **Live Demo:**
-https://muxken-chin.github.io/CodeAlpha_ImageGallery/
 
 📁 **Project Folder:** `CodeAlpha_ImageGallery`
 
